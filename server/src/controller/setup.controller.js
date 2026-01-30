@@ -21,8 +21,8 @@ export const createSuperAdmin = async (req, res) => {
     // 🔑 Hash password and insert
     const password_hash = await bcrypt.hash(password, 10);
     await pool.query(
-      `INSERT INTO auth.users (name, email, password_hash, role)
-       VALUES ($1, $2, $3, 'super_admin')`,
+      `INSERT INTO auth.users (name, email, password_hash, role, department)
+       VALUES ($1, $2, $3, 'super_admin', 'admin')`,
       [name, email, password_hash]
     );
 

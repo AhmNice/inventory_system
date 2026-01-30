@@ -19,9 +19,7 @@ export const createRequest = async (req, res) => {
     !equipment ||
     !Array.isArray(equipment) ||
     equipment.length === 0 ||
-    !reason ||
-    !start_date ||
-    !end_date
+    !reason 
   ) {
     return res.status(400).json({
       success: false,
@@ -35,8 +33,7 @@ export const createRequest = async (req, res) => {
       user_id,
       reason,
       status: "pending",
-      start_date,
-      end_date,
+
     });
     await request.saveWithItems(equipment);
 

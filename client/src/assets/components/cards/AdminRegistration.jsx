@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Eye, EyeOff, Loader } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useNavigate } from "react";
 import { toast } from "react-toastify";
 import { useSuperAdminCheck } from "../../../hooks/useSuperAdminCheck";
 
@@ -21,7 +21,7 @@ const AdminRegistration = () => {
       [name]: value,
     }));
   };
-
+  const navigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -39,6 +39,7 @@ const AdminRegistration = () => {
 
       toast.success(data.message || "Admin account created successfully!");
       setExists(true);
+      navigate('/login')
       window.location.reload();
 
       // Reset form after successful registration

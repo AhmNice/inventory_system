@@ -38,7 +38,7 @@ export class Equipment {
           this.category_id,
           this.equipment_image,
           this.status,
-        ]
+        ],
       );
       return result.rows[0];
     } catch (error) {
@@ -52,7 +52,7 @@ export class Equipment {
     try {
       const result = await pool.query(
         `SELECT * FROM inventory.equipment WHERE equipment_id = $1`,
-        [equipment_id]
+        [equipment_id],
       );
       return result.rows[0] || null;
     } catch (error) {
@@ -83,13 +83,36 @@ export class Equipment {
       throw error;
     }
   }
+  static async reduceQuantityByOne(equipmentId) {
+    const query = `
+   UPDATE inventory.equipment
+SET
+  quantity = quantity - 1,
+  status = CASE
+    WHEN quantity - 1 <= 0 THEN 'out'
+    ELSE status
+  END
+WHERE equipment_id = $1
+  AND quantity > 0
+RETURNING equipment_id, quantity, status;
+
+  `;
+
+    const { rows } = await pool.query(query, [equipmentId]);
+
+    if (rows.length === 0) {
+      throw new Error("Equipment out of stock or not found");
+    }
+
+    return rows[0];
+  }
 
   //  Delete by ID
   static async delete(equipment_id) {
     try {
       const result = await pool.query(
         `DELETE FROM inventory.equipment WHERE equipment_id = $1 RETURNING *`,
-        [equipment_id]
+        [equipment_id],
       );
       return result.rows[0] || null;
     } catch (error) {

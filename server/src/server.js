@@ -10,6 +10,7 @@ import equipmentRoute from "./routes/equipment.route.js";
 import logRoutes from "./routes/log.route.js";
 import requestRoute from "./routes/request.route.js";
 import statRoute from "./routes/stat.route.js";
+import check_out_route from "./routes/check.route.js";
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use("/api/equipment", equipmentRoute);
 app.use("/api/request", requestRoute);
 app.use("/api/logs", logRoutes);
 app.use("/api/stats", statRoute);
+app.use("/api/checkout", check_out_route);
 
 // ✅ Health check route (optional but useful)
 app.get("/", (req, res) => {

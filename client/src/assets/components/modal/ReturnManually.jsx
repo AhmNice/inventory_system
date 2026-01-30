@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { X, Search, CheckCircle, AlertCircle } from 'lucide-react';
+import { toast } from 'react-toastify';
+import { useRequestStore } from '../../../store/requestStore';
 
-const ReturnManually = ({ onClose, onReturnSuccess }) => {
+const ReturnManually = ({ onClose, onReturnSuccess, request_id }) => {
   const [equipmentId, setEquipmentId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
+  const {checkoutEquipment} = useRequestStore()
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -20,23 +22,19 @@ const ReturnManually = ({ onClose, onReturnSuccess }) => {
     setSuccess('');
 
     try {
-      // Simulate API call to process return
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // TODO: Replace with actual API call
-      console.log('Processing return for equipment ID:', equipmentId);
-
-      // Simulate successful return
+      const payload = {
+        equipment_id: equipmentId,
+        request_id
+      }
+     const response = await checkoutEquipment(payload)
+     if(!response.success){
+      return
+     }
       setSuccess(`Equipment ${equipmentId} returned successfully!`);
       setEquipmentId('');
-
-      // Notify parent component of successful return
-      setTimeout(() => {
-        onReturnSuccess?.(equipmentId);
-        onClose?.();
-      }, 1000);
-
     } catch (err) {
+      console.log(err)
+      toast.error(err.message)
       setError('Failed to process return. Please try again.');
     } finally {
       setLoading(false);

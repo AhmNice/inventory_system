@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import { toast } from "react-toastify";
 axios.defaults.withCredentials = true;
 
 const initialState = {
@@ -105,6 +106,34 @@ export const useRequestStore = create((set, get) => ({
       }
     } catch (error) {
       console.log("Error updating request status: ", error?.response?.data?.message);
+      return {
+        success: false,
+        message:
+          error?.response?.data?.message ||
+          "An error occurred while updating request status",
+      };
+    }
+  },
+  checkoutEquipment: async(payload) =>{
+    try {
+      const { data } = await axios.post(`${SERVER_ENDPOINT}/checkout/check-out/${payload.equipment_id}`, payload);
+      if (!data.success) {
+         toast.error(data.message)
+        return {
+          success: false,
+          message: data.message || "Updating request status failed",
+        };
+
+      }
+      toast.success(data.message)
+      return {
+        success:true,
+        message: data.message,
+      }
+
+    } catch (error) {
+      console.log("Error updating request status: ", error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || "Error updating request status")
       return {
         success: false,
         message:

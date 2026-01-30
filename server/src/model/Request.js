@@ -2,13 +2,11 @@ import { pool } from "../config/db.config.js";
 import fs from "fs";
 import copyTo from "pg-copy-streams";
 export class Request {
-  constructor({ user_id, reason, start_date, end_date, status = "pending" }) {
+  constructor({ user_id, reason, status = "pending" }) {
     this.user_id = user_id;
     this.reason = reason;
-    this.start_date = start_date;
-    this.end_date = end_date;
-    this.status = status;
-  }
+    this.status = status
+     }
 
   // 🧠 Save the main request and its items together
   async saveWithItems(equipmentArray = []) {
@@ -19,11 +17,11 @@ export class Request {
       // 1️⃣ Insert into operation.requests
       const requestResult = await client.query(
         `
-        INSERT INTO operation.requests (user_id, reason, start_date, end_date, status)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO operation.requests (user_id, reason, status)
+        VALUES ($1, $2, $3)
         RETURNING *;
         `,
-        [this.user_id, this.reason, this.start_date, this.end_date, this.status]
+        [this.user_id, this.reason, this.status]
       );
 
       const request = requestResult.rows[0];
@@ -63,7 +61,7 @@ export class Request {
         `
         SELECT ri.*, e.name AS equipment_name
         FROM operation.request_items ri
-        JOIN inventory.equipments e ON ri.equipment_id = e.equipment_id
+        JOIN inventory.equipment e ON ri.equipment_id = e.equipment_id
         WHERE ri.request_id = $1
         `,
         [request_id]
@@ -116,8 +114,7 @@ export class Request {
           u.phone_number AS user_phone,
           u.department AS user_department,
           rq.reason AS purpose,
-          rq.start_date,
-          rq.end_date,
+
           rq.status,
           rq.requested_at AS submitted_at,
           rq.approved_by,
@@ -125,8 +122,7 @@ export class Request {
           rq.declined_by,
           rq.declined_at,
           rq.decline_reason,
-          rq.note,
-          (rq.end_date - rq.start_date) AS total_days
+          rq.note
         FROM operation.requests rq
         JOIN auth.users u ON rq.user_id = u.user_id
         ORDER BY rq.requested_at DESC LIMIT $1 OFFSET $2
@@ -191,5 +187,5 @@ export class Request {
     }
   }
 
- 
+
 }

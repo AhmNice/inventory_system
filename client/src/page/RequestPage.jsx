@@ -29,8 +29,6 @@ const RequestEquipmentPage = () => {
   const [selectedEquipment, setSelectedEquipment] = useState([]);
   const [requestForm, setRequestForm] = useState({
     purpose: "",
-    start_date: "",
-    end_date: "",
     notes: "",
   });
 
@@ -155,25 +153,13 @@ const RequestEquipmentPage = () => {
       return;
     }
 
-    if (!requestForm.start_date || !requestForm.end_date) {
-      toast.error("Please select both start and end dates");
-      return;
-    }
+   
 
     const startDate = new Date(requestForm.start_date);
     const endDate = new Date(requestForm.end_date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    if (startDate < today) {
-      toast.error("Start date cannot be in the past");
-      return;
-    }
-
-    if (endDate <= startDate) {
-      toast.error("End date must be after start date");
-      return;
-    }
 
     // Calculate total days
     const timeDiff = endDate.getTime() - startDate.getTime();
@@ -509,46 +495,7 @@ const RequestEquipmentPage = () => {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label
-                        htmlFor="start_date"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Start Date *
-                      </label>
-                      <input
-                        type="date"
-                        id="start_date"
-                        name="start_date"
-                        value={requestForm.start_date}
-                        onChange={handleRequestFormChange}
-                        min={getTomorrowDate()}
-                        max={getMaxDate()}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#db002f] focus:border-transparent"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="end_date"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        End Date *
-                      </label>
-                      <input
-                        type="date"
-                        id="end_date"
-                        name="end_date"
-                        value={requestForm.end_date}
-                        onChange={handleRequestFormChange}
-                        min={requestForm.start_date || getTomorrowDate()}
-                        max={getMaxDate()}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#db002f] focus:border-transparent"
-                        required
-                      />
-                    </div>
-                  </div>
+
 
                   {requestForm.start_date && requestForm.end_date && (
                     <div className="bg-[#ffe6ea] border border-[#ffb8c4] rounded-lg p-3">
